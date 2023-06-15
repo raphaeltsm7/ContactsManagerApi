@@ -2,10 +2,10 @@
 using Microsoft.EntityFrameworkCore;
 
 namespace ContactsManagerApi.Data {
-    public class AppDbContext : DbContext {
+    public class ContactsDbContext : DbContext {
         public DbSet<Contact> Contacts { get; set; }
 
-        public AppDbContext(DbContextOptions<AppDbContext> options) : base(options) {
+        public ContactsDbContext(DbContextOptions<ContactsDbContext> options) : base(options) {
         }
     }
 }
