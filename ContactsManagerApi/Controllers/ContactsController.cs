@@ -59,6 +59,9 @@ namespace ContactsManagerApi.Controllers
             {
                 return BadRequest();
             }
+            if (!ModelState.IsValid) {
+                return BadRequest(ModelState);
+            }
 
             _context.Entry(contact).State = EntityState.Modified;
 
@@ -90,6 +93,10 @@ namespace ContactsManagerApi.Controllers
           {
               return Problem("Entity set 'ContactsDbContext.Contacts'  is null.");
           }
+          if (!ModelState.IsValid) {
+                return BadRequest(ModelState);
+            }
+
             _context.Contacts.Add(contact);
             await _context.SaveChangesAsync();
 
