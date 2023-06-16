@@ -23,13 +23,18 @@ namespace ContactsManagerApi.Controllers
 
         // GET: api/Contacts
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Contact>>> GetContacts()
+        public async Task<ActionResult<IEnumerable<Contact>>> GetContacts(int page = 1, int pageSize = 10)
         {
           if (_context.Contacts == null)
           {
               return NotFound();
           }
-            return await _context.Contacts.ToListAsync();
+            var contacts = await _context.Contacts
+                    .Skip((page - 1) * pageSize) // Pular os registros das páginas anteriores
+                    .Take(pageSize) // Obter apenas a quantidade de registros desejada
+                    .ToListAsync();
+
+            return contacts;
         }
 
         // GET: api/Contacts/5
