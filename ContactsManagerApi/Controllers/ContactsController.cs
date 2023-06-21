@@ -1,136 +1,185 @@
-﻿using System;
+﻿using AutoMapper;
+using ContactsManagerApi.Models;
+using ContactsManagerApi.Models.DTO;
+using ContactsManagerApi.Repository.IRepository;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using ContactsManagerApi.Data;
-using ContactsManagerApi.Models;
 
-namespace ContactsManagerApi.Controllers
-{
-    [Route("api/[controller]")]
+namespace ContactsManagerApi.Controllers {
+    [Route("api/ContactsAPI")]
     [ApiController]
-    public class ContactsController : ControllerBase
-    {
-        private readonly ContactsDbContext _context;
+    public class ContactsController : ControllerBase {
+        private readonly APIResponse _response;
+        private readonly IContactsRepository _dbContacts;
+        private readonly ILogger<ContactsController> _logger;
+        private readonly IMapper _mapper;
+        const int ACCEPTABLE_RATE = 8;
+        const int BEST_Contacts_SHOWED = 5;
 
-        public ContactsController(ContactsDbContext context)
-        {
-            _context = context;
+        public ContactsController(ILogger<ContactsController> logger, IContactsRepository db, IMapper mapper) {
+            _dbContacts = db;
+            _logger = logger;
+            _mapper = mapper;
+            _response = new APIResponse();
         }
 
-        // GET: api/Contacts
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Contact>>> GetContacts(int page = 1, int pageSize = 10)
-        {
-          if (_context.Contacts == null)
-          {
-              return NotFound();
-          }
-            var contacts = await _context.Contacts
-                    .Skip((page - 1) * pageSize) // Pular os registros das páginas anteriores
-                    .Take(pageSize) // Obter apenas a quantidade de registros desejada
-                    .ToListAsync();
-
-            return contacts;
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public async Task<ActionResult<APIResponse>> GetContacts() {
+            try {
+                IEnumerable<Contact> ContactsList = await _dbContacts.GetAllAsync();
+                _response.Result = _mapper.Map<List<ContactsDTO>>(ContactsList);
+                _response.StatusCode = System.Net.HttpStatusCode.OK;
+                return Ok(_response);
+            }
+            catch (Exception ex) {
+                _response.IsSuccess = false;
+                _response.ErrorMessages = new List<string>() { ex.Message };
+                return _response;
+            }
         }
 
-        // GET: api/Contacts/5
-        [HttpGet("{id}")]
-        public async Task<ActionResult<Contact>> GetContact(int id)
-        {
-          if (_context.Contacts == null)
-          {
-              return NotFound();
-          }
-            var contact = await _context.Contacts.FindAsync(id);
-
-            if (contact == null)
-            {
-                return NotFound();
-            }
-
-            return contact;
-        }
-
-        // PUT: api/Contacts/5
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPut("{id}")]
-        public async Task<IActionResult> PutContact(int id, Contact contact)
-        {
-            if (id != contact.Id)
-            {
-                return BadRequest();
-            }
-            if (!ModelState.IsValid) {
-                return BadRequest(ModelState);
-            }
-
-            _context.Entry(contact).State = EntityState.Modified;
-
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!ContactExists(id))
-                {
-                    return NotFound();
+        [HttpGet("{id:int}", Name = "GetContacts")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<ActionResult<APIResponse>> GetContacts(int id) {
+            try {
+                if (id <= 0) {
+                    _response.StatusCode = System.Net.HttpStatusCode.BadRequest;
+                    _response.ErrorMessages = new List<string> { "O parâmetro de Id do contato não foi passado corretamente." };
+                    return BadRequest(_response);
                 }
-                else
-                {
-                    throw;
-                }
-            }
 
-            return NoContent();
+                var contacts = await _dbContacts.GetAsync(p => p.Id == id);
+
+                if (contacts == null) {
+                    _response.StatusCode = System.Net.HttpStatusCode.NotFound;
+                    _response.ErrorMessages = new List<string> { $"O contato com o Id {id} não foi encontrado." };
+                    return NotFound(_response);
+                }
+
+                _response.Result = _mapper.Map<ContactsDTO>(contacts);
+                _response.StatusCode = System.Net.HttpStatusCode.OK;
+                return Ok(_response);
+            }
+            catch (Exception ex) {
+                _response.IsSuccess = false;
+                _response.ErrorMessages = new List<string>() { ex.Message };
+                return _response;
+            }
         }
 
-        // POST: api/Contacts
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+
         [HttpPost]
-        public async Task<ActionResult<Contact>> PostContact(Contact contact)
-        {
-          if (_context.Contacts == null)
-          {
-              return Problem("Entity set 'ContactsDbContext.Contacts'  is null.");
-          }
-          if (!ModelState.IsValid) {
-                return BadRequest(ModelState);
+        [ProducesResponseType(StatusCodes.Status201Created)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<ActionResult<APIResponse>> Createcontacts([FromBody] ContactsCreateDTO ContactsDTO) {
+            try {
+                if (ContactsDTO == null) {
+                    _response.StatusCode = System.Net.HttpStatusCode.BadRequest;
+                    return BadRequest(_response);
+                }
+
+                if (!ModelState.IsValid) {
+                    _response.StatusCode = System.Net.HttpStatusCode.BadRequest;
+                    _response.ErrorMessages = ModelState.Values.SelectMany(v => v.Errors.Select(e => e.ErrorMessage)).ToList();
+                    return BadRequest(_response);
+                }
+
+                if (await _dbContacts.GetAsync(p => p.Name.ToLower() == ContactsDTO.Name.ToLower()) != null) {
+                    var message = "Este contato já foi registrado!";
+                    ModelState.AddModelError("Erro:", message);
+                    _response.StatusCode = System.Net.HttpStatusCode.BadRequest;
+                    _response.ErrorMessages = new List<string> { message };
+                    return BadRequest(_response);
+                }
+
+                var contacts = _mapper.Map<Contact>(ContactsDTO);
+
+                await _dbContacts.CreateAsync(contacts);
+
+                _logger.LogInformation("Novo contato adicionado.");
+
+                _response.Result = _mapper.Map<ContactsDTO>(contacts);
+                _response.StatusCode = System.Net.HttpStatusCode.Created;
+                return CreatedAtRoute("GetContacts", new { id = contacts.Id }, _response);
             }
-
-            _context.Contacts.Add(contact);
-            await _context.SaveChangesAsync();
-
-            return CreatedAtAction("GetContact", new { id = contact.Id }, contact);
+            catch (Exception ex) {
+                _response.IsSuccess = false;
+                _response.ErrorMessages = new List<string>() { ex.Message };
+                return _response;
+            }
         }
 
-        // DELETE: api/Contacts/5
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteContact(int id)
-        {
-            if (_context.Contacts == null)
-            {
-                return NotFound();
-            }
-            var contact = await _context.Contacts.FindAsync(id);
-            if (contact == null)
-            {
-                return NotFound();
-            }
+        [HttpDelete("{id:int}")]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<ActionResult<APIResponse>> Deletecontacts(int id) {
+            try {
+                if (id <= 0) {
+                    _response.StatusCode = System.Net.HttpStatusCode.BadRequest;
+                    return BadRequest(_response);
+                }
 
-            _context.Contacts.Remove(contact);
-            await _context.SaveChangesAsync();
+                var contacts = await _dbContacts.GetAsync(p => p.Id == id);
 
-            return NoContent();
+                if (contacts == null) {
+                    _response.StatusCode = System.Net.HttpStatusCode.NotFound;
+                    return NotFound(_response);
+                }
+
+                await _dbContacts.RemoveAsync(contacts);
+                _logger.LogInformation($"contato de Id {id} foi removido.");
+                _response.StatusCode = System.Net.HttpStatusCode.NoContent;
+                _response.IsSuccess = true;
+                return Ok(_response);
+            }
+            catch (Exception ex) {
+                _response.IsSuccess = false;
+                _response.ErrorMessages = new List<string>() { ex.Message };
+                return _response;
+            }
         }
 
-        private bool ContactExists(int id)
-        {
-            return (_context.Contacts?.Any(e => e.Id == id)).GetValueOrDefault();
+        [HttpPut("{id:int}")]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<ActionResult<APIResponse>> Updatecontacts(int id, [FromBody] ContactsUpdateDTO ContactsDTO) {
+            try {
+                if (ContactsDTO == null || id != ContactsDTO.Id) {
+                    _response.StatusCode = System.Net.HttpStatusCode.BadRequest;
+                    return BadRequest(_response);
+                }
+
+                var contacts = await _dbContacts.GetAsync(p => p.Id == id);
+
+                if (contacts == null) {
+                    _response.StatusCode = System.Net.HttpStatusCode.BadRequest;
+                    _response.ErrorMessages = new List<string> { $"O contato com o Id {id} não foi encontrado." };
+                    return BadRequest(_response);
+                }
+
+                _mapper.Map(ContactsDTO, contacts);
+
+                await _dbContacts.UpdateAsync(contacts);
+
+                _logger.LogInformation($"contato de Id {id} foi atualizado.");
+                _response.StatusCode = System.Net.HttpStatusCode.NoContent;
+                _response.IsSuccess = true;
+                return Ok(_response);
+            }
+            catch (Exception ex) {
+                _response.IsSuccess = false;
+                _response.ErrorMessages = new List<string>() { ex.Message };
+                return _response;
+            }
         }
     }
 }
