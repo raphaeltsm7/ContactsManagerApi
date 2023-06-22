@@ -1,5 +1,7 @@
 using ContactsManagerApi;
 using ContactsManagerApi.Data;
+using ContactsManagerApi.Repository;
+using ContactsManagerApi.Repository.IRepository;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Pomelo.EntityFrameworkCore.MySql.Infrastructure;

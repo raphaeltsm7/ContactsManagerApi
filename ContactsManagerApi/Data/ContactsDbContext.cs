@@ -7,5 +7,7 @@ namespace ContactsManagerApi.Data {
 
         public ContactsDbContext(DbContextOptions<ContactsDbContext> options) : base(options) {
         }
+
+
     }
 }

@@ -18,7 +18,7 @@ namespace ContactsManagerApi.Repository
 
     public async Task<Contact> UpdateAsync(Contact contacts)
     {
-        _db.Contact.Update(contacts);
+        _db.Contacts.Update(contacts);
         await _db.SaveChangesAsync();
         return contacts;
     }
