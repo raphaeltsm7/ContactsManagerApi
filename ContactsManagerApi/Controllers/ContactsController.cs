@@ -3,11 +3,6 @@ using ContactsManagerApi.Models;
 using ContactsManagerApi.Models.DTO;
 using ContactsManagerApi.Repository.IRepository;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace ContactsManagerApi.Controllers {
     [Route("api/ContactsAPI")]
@@ -17,8 +12,6 @@ namespace ContactsManagerApi.Controllers {
         private readonly IContactsRepository _dbContacts;
         private readonly ILogger<ContactsController> _logger;
         private readonly IMapper _mapper;
-        const int ACCEPTABLE_RATE = 8;
-        const int BEST_Contacts_SHOWED = 5;
 
         public ContactsController(ILogger<ContactsController> logger, IContactsRepository db, IMapper mapper) {
             _dbContacts = db;

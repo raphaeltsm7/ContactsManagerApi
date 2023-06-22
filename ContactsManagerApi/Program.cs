@@ -1,3 +1,4 @@
+using ContactsManagerApi;
 using ContactsManagerApi.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -15,7 +16,8 @@ var configuration = new ConfigurationBuilder()
 string? connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
 builder.Services.AddDbContext<ContactsDbContext>(options => options.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString)));
 
-
+builder.Services.AddScoped<IContactsRepository, ContactsRepository>();
+builder.Services.AddAutoMapper(typeof(MappingConfig));
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
