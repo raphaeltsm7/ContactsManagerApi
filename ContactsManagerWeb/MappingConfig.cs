@@ -1,7 +1,7 @@
 ﻿using AutoMapper;
 using ContactsManagerWeb.Models.DTO;
 
-namespace ContactsManagerApi
+namespace ContactsManagerWeb
 {
     public class MappingConfig : Profile
     {

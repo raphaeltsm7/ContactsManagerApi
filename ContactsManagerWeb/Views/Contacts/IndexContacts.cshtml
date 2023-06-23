@@ -1,0 +1,47 @@
+﻿@model IEnumerable<ContactsManagerWeb.Models.DTO.ContactsDTO>
+<br />
+<div class="container p-4 corder">
+    <div class="row pb-2">
+        <div class="col">
+            <h1 class="text-primary"> Contacts List</h1>
+        </div>
+        <div class="col text-end pt-1">
+            <a class="btn btn-outline-primary"><i class="bi bi-person-plus-fill"></i>Create New Contact</a>
+        </div>
+
+    </div>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>
+                    Name
+                </th>
+                <th>
+                    Email
+                </th>
+                <th>
+                    Phone
+                </th>
+                <th>
+                    Address
+                </th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>@item.Name</td>
+                    <td>@item.Email</td>
+                    <td>@item.Phone</td>
+                    <td>@item.Address</td>
+                    <td></td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+
+</div>
+

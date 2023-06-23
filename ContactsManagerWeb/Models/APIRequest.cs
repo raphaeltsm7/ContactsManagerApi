@@ -1,5 +1,4 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using static ContactsManagerUtility.SD;
+﻿using static ContactsManagerUtility.SD;
 
 namespace ContactsManagerWeb.Models {
     public class APIRequest {

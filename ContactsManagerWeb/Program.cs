@@ -1,4 +1,4 @@
-using ContactsManagerApi;
+using ContactsManagerWeb;
 using ContactsManagerWeb.Services;
 using ContactsManagerWeb.Services.IServices;
 
@@ -9,7 +9,9 @@ builder.Services.AddControllersWithViews();
 builder.Services.AddAutoMapper(typeof(MappingConfig));
 
 builder.Services.AddHttpClient<IContactsService, ContactsService>();
+builder.Services.AddHttpClient();
 builder.Services.AddScoped<IContactsService, ContactsService>();
+
 
 var app = builder.Build();
 

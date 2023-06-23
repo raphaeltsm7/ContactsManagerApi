@@ -22,16 +22,17 @@ namespace ContactsManagerApi.Repository
                 await SaveAsync();
             }
 
-            public async Task<List<T>> GetAllAsync(Expression<Func<T, bool>>? filter = null)
+        public async Task<List<T>> GetAllAsync(Expression<Func<T, bool>>? filter = null, string? includeProperties = null,
+        int pageSize = 0, int pageNumber = 1)
             {
                 var contactsLoaded = await LoadEntity(filter);
 
                 return await contactsLoaded.ToListAsync();
             }
 
-            public async Task<T> GetAsync(Expression<Func<T, bool>> filter = null, bool tracked = true)
-            {
-                var contactsLoaded = await LoadEntity(filter);
+        public async Task<T> GetAsync(Expression<Func<T, bool>> filter = null, bool tracked = true, string? includeProperties = null)
+        {
+            var contactsLoaded = await LoadEntity(filter);
 
                 if (!tracked)
                 {
@@ -68,12 +69,12 @@ namespace ContactsManagerApi.Repository
                 return query;
             }
 
-            public IEnumerable<T> Search(Expression<Func<T, bool>> predicate, bool asNoTracking = true)
-            {
-                return !asNoTracking
-                    ? dbSet.Where(predicate).ToList()
-                    : dbSet.AsNoTracking().Where(predicate).ToList();
-            }
+           // public IEnumerable<T> Search(Expression<Func<T, bool>> predicate, bool asNoTracking = true)
+          //  {
+          //      return !asNoTracking
+          //          ? dbSet.Where(predicate).ToList()
+          //          : dbSet.AsNoTracking().Where(predicate).ToList();
+          //  }
 
         }
 
