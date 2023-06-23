@@ -53,7 +53,7 @@ namespace ContactsManagerWeb.Controllers
         }
 
         [HttpPost]
-        [ValidateAntiForgeryToken]
+        //[ValidateAntiForgeryToken]
         public async Task<IActionResult> EditContact(ContactsUpdateDTO contact)
         {
             if (ModelState.IsValid)
@@ -83,7 +83,7 @@ namespace ContactsManagerWeb.Controllers
         }
 
         [HttpPost]
-        [ValidateAntiForgeryToken]
+        //[ValidateAntiForgeryToken]
         public async Task<IActionResult> CreateContact(ContactsCreateDTO contact)
         {
             if (ModelState.IsValid)
