@@ -2,6 +2,8 @@
 using ContactsManagerWeb.Models;
 using ContactsManagerWeb.Models.DTO;
 using ContactsManagerWeb.Services.IServices;
+using ContactsManagerWeb.Utils;
+using Microsoft.Extensions.Options;
 
 namespace ContactsManagerWeb.Services
 {
@@ -9,11 +11,11 @@ namespace ContactsManagerWeb.Services
     {
 
         private readonly IHttpClientFactory _clientFactory;
-        private string contactsUrl;
-        public ContactsService(IHttpClientFactory clientFactory, IConfiguration configuration) : base(clientFactory)
+        private readonly ServicesUrlsConfig _servicesUrls;
+        public ContactsService(IHttpClientFactory clientFactory, IOptions<ServicesUrlsConfig> servicesUrls) : base(clientFactory)
         {
             _clientFactory = clientFactory;
-            contactsUrl = configuration.GetValue<string>("ServiceUrls:ContactsManagerAPI");
+            _servicesUrls = servicesUrls.Value;
         }
 
         public Task<T> CreateAsync<T>(ContactsCreateDTO dto)
@@ -22,7 +24,7 @@ namespace ContactsManagerWeb.Services
             {
                 ApiType = SD.ApiType.POST,
                 Data = dto,
-                Url = contactsUrl + "/api/ContactsAPI"
+                Url = $"{_servicesUrls.ContactsAPI}/ContactsAPI/"
             });
         }
 
@@ -31,7 +33,7 @@ namespace ContactsManagerWeb.Services
             return SendAsync<T>(new APIRequest()
             {
                 ApiType = SD.ApiType.DELETE,
-                Url = contactsUrl + "/api/ContactsAPI/" + id
+                Url = $"{_servicesUrls.ContactsAPI}/ContactsAPI/{id}"
             });
         }
 
@@ -40,7 +42,7 @@ namespace ContactsManagerWeb.Services
             return SendAsync<T>(new APIRequest()
             {
                 ApiType = SD.ApiType.GET,
-                Url = contactsUrl + "/api/ContactsAPI"
+                Url = $"{_servicesUrls.ContactsAPI}/ContactsAPI/"
             });
         }
 
@@ -49,7 +51,7 @@ namespace ContactsManagerWeb.Services
             return SendAsync<T>(new APIRequest()
             {
                 ApiType = SD.ApiType.GET,
-                Url = contactsUrl + "/api/ContactsAPI/" + id
+                Url = $"{_servicesUrls.ContactsAPI}/ContactsAPI/{id}"
             });
         }
 
@@ -59,7 +61,7 @@ namespace ContactsManagerWeb.Services
             {
                 ApiType = SD.ApiType.PUT,
                 Data = dto,
-                Url = contactsUrl + "/api/ContactsAPI/" + dto.Id
+                Url = $"{_servicesUrls.ContactsAPI}/ContactsAPI/{dto.Id}"
             });
         }
     }

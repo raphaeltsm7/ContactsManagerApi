@@ -6,8 +6,8 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace ContactsManagerApi.Controllers {
     [Route("api/ContactsAPI")]
-    [ApiController]
     public class ContactsController : ControllerBase {
+
         private readonly APIResponse _response;
         private readonly IContactsRepository _dbContacts;
         private readonly ILogger<ContactsController> _logger;
@@ -32,15 +32,15 @@ namespace ContactsManagerApi.Controllers {
             catch (Exception ex) {
                 _response.IsSuccess = false;
                 _response.ErrorMessages = new List<string>() { ex.Message };
-                return _response;
             }
+            return _response;
         }
 
-        [HttpGet("{id:int}", Name = "GetContacts")]
+        [HttpGet("{id:int}", Name = "GetContact")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<ActionResult<APIResponse>> GetContacts(int id) {
+        public async Task<ActionResult<APIResponse>> GetContact(int id) {
             try {
                 if (id <= 0) {
                     _response.StatusCode = System.Net.HttpStatusCode.BadRequest;

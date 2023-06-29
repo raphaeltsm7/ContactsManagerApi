@@ -1,5 +1,7 @@
 ﻿using ContactsManagerWeb.Models;
+using ContactsManagerWeb.Models.DTO;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
 using System.Diagnostics;
 
 namespace ContactsManagerWeb.Controllers {
@@ -11,6 +13,7 @@ namespace ContactsManagerWeb.Controllers {
         }
 
         public IActionResult Index() {
+
             return View();
         }
 

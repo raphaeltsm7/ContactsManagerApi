@@ -6,13 +6,16 @@
             <h1 class="text-primary"> Contacts List</h1>
         </div>
         <div class="col text-end pt-1">
-            <a class="btn btn-outline-primary"><i class="bi bi-person-plus-fill"></i>Create New Contact</a>
+            <a asp-controller="Contacts" asp-action="CreateContact" class="btn btn-outline-primary"><i class="bi bi-person-plus-fill"></i>Create New Contact</a>
         </div>
 
     </div>
-    <table class="table">
+    <table class="table" width="100%">
         <thead>
             <tr>
+                <th>
+                    Id
+                </th>
                 <th>
                     Name
                 </th>
@@ -32,11 +35,16 @@
             @foreach (var item in Model)
             {
                 <tr>
+                    <td>@item.Id</td>
                     <td>@item.Name</td>
                     <td>@item.Email</td>
                     <td>@item.Phone</td>
                     <td>@item.Address</td>
-                    <td></td>
+                    <td>
+                        <a asp-controller="Contacts" asp-action="UpdateContact" class="btn btn-sucess"><i class="bi bi-person-plus-fill"></i>Update New Contact</a>
+                        <a asp-controller="Contacts" asp-action="DeleteContact" class="btn btn-danger"><i class="bi bi-person-plus-fill"></i>Delete New Contact</a>
+
+                    </td>
                 </tr>
             }
         </tbody>

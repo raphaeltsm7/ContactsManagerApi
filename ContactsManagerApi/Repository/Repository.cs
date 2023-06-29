@@ -69,12 +69,12 @@ namespace ContactsManagerApi.Repository
                 return query;
             }
 
-           // public IEnumerable<T> Search(Expression<Func<T, bool>> predicate, bool asNoTracking = true)
-          //  {
-          //      return !asNoTracking
-          //          ? dbSet.Where(predicate).ToList()
-          //          : dbSet.AsNoTracking().Where(predicate).ToList();
-          //  }
+            public IEnumerable<T> Search(Expression<Func<T, bool>> predicate, bool asNoTracking = true)
+            {
+                return !asNoTracking
+                    ? dbSet.Where(predicate).ToList()
+                   : dbSet.AsNoTracking().Where(predicate).ToList();
+            }
 
         }
 

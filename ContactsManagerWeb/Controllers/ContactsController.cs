@@ -24,7 +24,7 @@ namespace ContactsManagerWeb.Controllers
         {
             var listContacts = new List<ContactsDTO>();
             var response = await _contactsService.GetAllAsync<APIResponse>();
-            if (response.IsValid())
+            if (response != null && response.IsSuccess)
             {
                 listContacts = JsonConvert.DeserializeObject<List<ContactsDTO>>(Convert.ToString(response.Result));
             }

@@ -8,4 +8,5 @@ namespace ContactsManagerWeb.Models {
         public object Data { get; set; }
 
     }
+
 }

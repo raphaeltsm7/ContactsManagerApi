@@ -2,7 +2,9 @@
 using ContactsManagerWeb.Models;
 using ContactsManagerWeb.Services.IServices;
 using Newtonsoft.Json;
+using System.Net.Http.Headers;
 using System.Text;
+using static ContactsManagerUtility.SD;
 
 namespace ContactsManagerWeb.Services {
     public class BaseService : IBaseService {
@@ -13,9 +15,9 @@ namespace ContactsManagerWeb.Services {
             this.httpClient = httpClient;
         }
 
-        public async Task<T> SendAsync<T>(APIRequest apiRequest) {
+            public async Task<T> SendAsync<T>(APIRequest apiRequest) {
             try {
-                var client = httpClient.CreateClient("ContactManagerAPI");
+                var client = httpClient.CreateClient("ContactsAPI");
                 HttpRequestMessage message = new HttpRequestMessage();
                 message.Headers.Add("Accept", "application/json");
                 message.RequestUri = new Uri(apiRequest.Url);
@@ -45,12 +47,32 @@ namespace ContactsManagerWeb.Services {
                 apiResponse = await client.SendAsync(message);
 
                 var apiContent = await apiResponse.Content.ReadAsStringAsync();
+                try
+                {
+                    APIResponse ApiResponse = JsonConvert.DeserializeObject<APIResponse>(apiContent);
+                    if (ApiResponse != null && (apiResponse.StatusCode == System.Net.HttpStatusCode.BadRequest
+                        || apiResponse.StatusCode == System.Net.HttpStatusCode.NotFound))
+                    {
+                        ApiResponse.StatusCode = System.Net.HttpStatusCode.BadRequest;
+                        ApiResponse.IsSuccess = false;
+                        var res = JsonConvert.SerializeObject(ApiResponse);
+                        var returnObj = JsonConvert.DeserializeObject<T>(res);
+                        return returnObj;
+                    }
+                }
+                catch (Exception e)
+                {
+                    var exceptionResponse = JsonConvert.DeserializeObject<T>(apiContent);
+                    return exceptionResponse;
+                }
                 var APIResponse = JsonConvert.DeserializeObject<T>(apiContent);
-
                 return APIResponse;
+
             }
-            catch (Exception e) {
-                var dto = new APIResponse {
+            catch (Exception e)
+            {
+                var dto = new APIResponse
+                {
                     ErrorMessage = new List<string> { Convert.ToString(e.Message) },
                     IsSuccess = false
                 };
@@ -59,6 +81,5 @@ namespace ContactsManagerWeb.Services {
                 return APIResponse;
             }
         }
-
     }
 }
