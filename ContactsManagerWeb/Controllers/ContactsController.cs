@@ -24,7 +24,7 @@ namespace ContactsManagerWeb.Controllers
         {
             var listContacts = new List<ContactsDTO>();
             var response = await _contactsService.GetAllAsync<APIResponse>();
-            if (response != null && response.IsSuccess)
+            if (response.IsValid())
             {
                 listContacts = JsonConvert.DeserializeObject<List<ContactsDTO>>(Convert.ToString(response.Result));
             }
@@ -37,7 +37,7 @@ namespace ContactsManagerWeb.Controllers
             var response = await _contactsService.DeleteAsync<APIResponse>(id);
 
             TempData["success"] = "Contact was deleted!";
-            return RedirectToAction(nameof(Index));
+            return RedirectToAction(nameof(IndexContacts));
         }
 
         public async Task<IActionResult> EditContact(int id)
@@ -62,7 +62,7 @@ namespace ContactsManagerWeb.Controllers
                 if (response.IsValid())
                 {
                     TempData["success"] = "Contact was edited successfully!";
-                    return RedirectToAction(nameof(Index));
+                    return RedirectToAction(nameof(IndexContacts));
                 }
                 else
                 {
@@ -92,7 +92,7 @@ namespace ContactsManagerWeb.Controllers
                 if (response.IsValid())
                 {
                     TempData["success"] = "Contact was created successfully!";
-                    return RedirectToAction(nameof(Index));
+                    return RedirectToAction(nameof(IndexContacts));
                 }
                 else
                 {

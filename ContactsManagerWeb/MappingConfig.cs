@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using ContactsManagerWeb.Models;
 using ContactsManagerWeb.Models.DTO;
 
 namespace ContactsManagerWeb

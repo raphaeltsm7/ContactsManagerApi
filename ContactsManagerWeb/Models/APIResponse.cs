@@ -7,6 +7,16 @@ namespace ContactsManagerWeb.Models {
         public List<string> ErrorMessage { get; set; }
         public object Result { get; set; }
 
+        public APIResponse(HttpStatusCode statusCode, bool isSuccess, List<string>? errorMessages, object? result)
+        {
+            StatusCode = statusCode;
+            IsSuccess = isSuccess;
+            ErrorMessage = errorMessages;
+            Result = result;
+        }
 
+        public APIResponse()
+        {
+        }
     }
 }

@@ -22,27 +22,26 @@ namespace ContactsManagerApi.Repository
                 await SaveAsync();
             }
 
-        public async Task<List<T>> GetAllAsync(Expression<Func<T, bool>>? filter = null, string? includeProperties = null,
-        int pageSize = 0, int pageNumber = 1)
-            {
-                var contactsLoaded = await LoadEntity(filter);
-
-                return await contactsLoaded.ToListAsync();
-            }
-
-        public async Task<T> GetAsync(Expression<Func<T, bool>> filter = null, bool tracked = true, string? includeProperties = null)
+        public async Task<List<T>> GetAllAsync(Expression<Func<T, bool>>? filter = null)
         {
             var contactsLoaded = await LoadEntity(filter);
 
-                if (!tracked)
-                {
-                    contactsLoaded = contactsLoaded.AsNoTracking();
-                }
+            return await contactsLoaded.ToListAsync();
+        }
 
-                return await contactsLoaded.FirstOrDefaultAsync();
+        public async Task<T> GetAsync(Expression<Func<T, bool>> filter = null, bool tracked = true)
+        {
+            var contactsLoaded = await LoadEntity(filter);
+
+            if (!tracked)
+            {
+                contactsLoaded = contactsLoaded.AsNoTracking();
             }
 
-            public Task RemoveAsync(T entity)
+            return await contactsLoaded.FirstOrDefaultAsync();
+        }
+
+        public Task RemoveAsync(T entity)
             {
                 if (entity == null)
                 {

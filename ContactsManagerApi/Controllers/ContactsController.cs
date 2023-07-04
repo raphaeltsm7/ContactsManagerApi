@@ -5,7 +5,7 @@ using ContactsManagerApi.Repository.IRepository;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ContactsManagerApi.Controllers {
-    [Route("api/ContactsAPI")]
+    [Route("/ContactsAPI")]
     public class ContactsController : ControllerBase {
 
         private readonly APIResponse _response;
@@ -17,7 +17,7 @@ namespace ContactsManagerApi.Controllers {
             _dbContacts = db;
             _logger = logger;
             _mapper = mapper;
-            _response = new APIResponse();
+            this._response = new APIResponse();
         }
 
         [HttpGet]
@@ -36,35 +36,35 @@ namespace ContactsManagerApi.Controllers {
             return _response;
         }
 
-        [HttpGet("{id:int}", Name = "GetContact")]
+        [HttpGet("{id:int}", Name = "GetContacts")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<ActionResult<APIResponse>> GetContact(int id) {
+        public async Task<ActionResult<APIResponse>> GetContacts(int id) {
             try {
-                if (id <= 0) {
+                if (id == 0) {
                     _response.StatusCode = System.Net.HttpStatusCode.BadRequest;
                     _response.ErrorMessages = new List<string> { "O parâmetro de Id do contato não foi passado corretamente." };
                     return BadRequest(_response);
                 }
 
-                var contacts = await _dbContacts.GetAsync(p => p.Id == id);
+                var contact = await _dbContacts.GetAsync(contact => contact.Id == id);
 
-                if (contacts == null) {
+                if (contact == null) {
                     _response.StatusCode = System.Net.HttpStatusCode.NotFound;
                     _response.ErrorMessages = new List<string> { $"O contato com o Id {id} não foi encontrado." };
                     return NotFound(_response);
                 }
 
-                _response.Result = _mapper.Map<ContactsDTO>(contacts);
+                _response.Result = _mapper.Map<ContactsDTO>(contact);
                 _response.StatusCode = System.Net.HttpStatusCode.OK;
                 return Ok(_response);
             }
             catch (Exception ex) {
                 _response.IsSuccess = false;
                 _response.ErrorMessages = new List<string>() { ex.Message };
-                return _response;
             }
+            return _response;
         }
 
 
@@ -93,15 +93,15 @@ namespace ContactsManagerApi.Controllers {
                     return BadRequest(_response);
                 }
 
-                var contacts = _mapper.Map<Contact>(ContactsDTO);
+                var contact = _mapper.Map<Contact>(ContactsDTO);
 
-                await _dbContacts.CreateAsync(contacts);
+                await _dbContacts.CreateAsync(contact);
 
                 _logger.LogInformation("Novo contato adicionado.");
 
-                _response.Result = _mapper.Map<ContactsDTO>(contacts);
+                _response.Result = _mapper.Map<ContactsDTO>(contact);
                 _response.StatusCode = System.Net.HttpStatusCode.Created;
-                return CreatedAtRoute("GetContacts", new { id = contacts.Id }, _response);
+                return CreatedAtRoute("GetContacts", new { id = contact.Id }, _response);
             }
             catch (Exception ex) {
                 _response.IsSuccess = false;
@@ -171,8 +171,8 @@ namespace ContactsManagerApi.Controllers {
             catch (Exception ex) {
                 _response.IsSuccess = false;
                 _response.ErrorMessages = new List<string>() { ex.Message };
-                return _response;
             }
+            return _response;
         }
     }
 }

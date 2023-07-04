@@ -8,9 +8,7 @@ namespace ContactsManagerApi
     {
         public MappingConfig()
         {
-            CreateMap<Contact, ContactsDTO>();
-            CreateMap<ContactsDTO, Contact>();
-
+            CreateMap<Contact, ContactsDTO>().ReverseMap();
             CreateMap<Contact, ContactsCreateDTO>().ReverseMap();
             CreateMap<Contact, ContactsUpdateDTO>().ReverseMap();
 
