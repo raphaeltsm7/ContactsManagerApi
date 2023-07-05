@@ -1,0 +1,56 @@
+﻿@model ContactsManagerWeb.Models.DTO.ContactsCreateDTO
+
+<form asp-action="CreateContact">
+    <br/>
+    <div class="container border p-3">
+        <h1 class="text-primary"> Create Contact </h1>
+        <hr/>
+        
+        <div class="row">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+            <div class="col-2">
+                <label asp-for="Name" class="control-label pt-2" style="font-size:20px;"></label>
+            </div>
+            <div class="col-10 pb-3">
+                <input asp-for="Name" class="form-control" />
+                <span asp-validation-for="Name" class="text-danger"></span>
+            </div>
+
+            <div class="col-2">
+                <label asp-for="Email" class="control-label pt-2" style="font-size:20px;"></label>
+            </div>
+            <div class="col-10 pb-3">
+                <input asp-for="Email" class="form-control" />
+                <span asp-validation-for="Email" class="text-danger"></span>
+            </div>
+
+            <div class="col-2">
+                <label asp-for="Phone" class="control-label pt-2" style="font-size:20px;"></label>
+            </div>
+            <div class="col-10 pb-3">
+                <input asp-for="Phone" class="form-control" />
+                <span asp-validation-for="Phone" class="text-danger"></span>
+            </div>
+
+            <div class="col-2">
+                <label asp-for="Address" class="control-label pt-2" style="font-size:20px;"></label>
+            </div>
+            <div class="col-10 pb-3">
+                <input asp-for="Address" class="form-control" />
+                <span asp-validation-for="Address" class="text-danger"></span>
+            </div>
+            
+                <div class="col-5 offset-2">
+                    <a asp-action="IndexContacts" asp-controller="Contacts" class="btn-primary btn form-control "> Back to Contacts List</a>
+                </div>
+            <div class="col-5">
+                <input type="submit" value=" Create " class="btn btn-success form-control" />
+            </div>
+        </div>
+    </div>
+</form>
+
+@section Scripts{
+    <partial name="_ValidationScriptsPartial" />
+}

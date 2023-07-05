@@ -6,7 +6,7 @@
             <h1 class="text-primary"> Contacts List</h1>
         </div>
         <div class="col text-end pt-1">
-            <a asp-controller="Contacts" asp-action="CreateContact" class="btn btn-outline-primary"><i class="bi bi-person-plus-fill"></i>Create New Contact</a>
+            <a asp-controller="Contacts" asp-action="CreateContact" class="btn btn-outline-primary"><i class="bi bi-person-plus-fill"></i> Create New Contact </a>
         </div>
 
     </div>
@@ -41,8 +41,8 @@
                     <td>@item.Phone</td>
                     <td>@item.Address</td>
                     <td>
-                        <a asp-controller="Contacts" asp-action="UpdateContact" class="btn btn-sucess"><i class="bi bi-person-plus-fill"></i>Update New Contact</a>
-                        <a asp-controller="Contacts" asp-action="DeleteContact" class="btn btn-danger"><i class="bi bi-person-plus-fill"></i>Delete New Contact</a>
+                        <a asp-controller="Contacts" asp-action="UpdateContact" class="btn btn-success"><i class="bi bi-pencil-square"></i></a>
+                        <a asp-controller="Contacts" asp-action="DeleteContact" class="btn btn-danger"><i class="bi bi-person-dash-fill"></i></a>
 
                     </td>
                 </tr>
