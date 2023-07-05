@@ -41,8 +41,8 @@
                     <td>@item.Phone</td>
                     <td>@item.Address</td>
                     <td>
-                        <a asp-controller="Contacts" asp-action="UpdateContact" class="btn btn-success"><i class="bi bi-pencil-square"></i></a>
-                        <a asp-controller="Contacts" asp-action="DeleteContact" class="btn btn-danger"><i class="bi bi-person-dash-fill"></i></a>
+                        <a asp-controller="Contacts" asp-action="UpdateContact" asp-route-contactId="@item.Id" class="btn btn-success"><i class="bi bi-pencil-square"></i></a>
+                        <a asp-controller="Contacts" asp-action="DeleteContact" asp-route-contactId="@item.Id" class="btn btn-danger"><i class="bi bi-person-dash-fill"></i></a>
 
                     </td>
                 </tr>

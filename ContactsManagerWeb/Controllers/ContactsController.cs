@@ -32,33 +32,32 @@ namespace ContactsManagerWeb.Controllers
         }
 
         [HttpDelete]
-        public async Task<IActionResult> DeleteContact(int id)
+        public async Task<IActionResult> DeleteContact(int contactId)
         {
-            var response = await _contactsService.DeleteAsync<APIResponse>(id);
+            var response = await _contactsService.DeleteAsync<APIResponse>(contactId);
 
             TempData["success"] = "Contact was deleted!";
             return RedirectToAction(nameof(IndexContacts));
         }
 
-        public async Task<IActionResult> EditContact(int id)
+        public async Task<IActionResult> UpdateContact(int contactId)
         {
-            var response = await _contactsService.GetAsync<APIResponse>(id);
+            var response = await _contactsService.GetAsync<APIResponse>(contactId);
             if (response.IsValid())
             {
-                var contact = JsonConvert.DeserializeObject<ContactsDTO>(Convert.ToString(response.Result));
-                return View(_mapper.Map<ContactsUpdateDTO>(contact));
+                ContactsDTO model = JsonConvert.DeserializeObject<ContactsDTO>(Convert.ToString(response.Result));
+                return View(_mapper.Map<ContactsUpdateDTO>(model));
             }
-
             return NotFound();
         }
 
         [HttpPost]
-        //[ValidateAntiForgeryToken]
-        public async Task<IActionResult> EditContact(ContactsUpdateDTO contact)
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> UpdateContact(ContactsUpdateDTO model)
         {
             if (ModelState.IsValid)
             {
-                var response = await _contactsService.UpdateAsync<APIResponse>(contact);
+                var response = await _contactsService.UpdateAsync<APIResponse>(model);
                 if (response.IsValid())
                 {
                     TempData["success"] = "Contact was edited successfully!";
@@ -74,7 +73,7 @@ namespace ContactsManagerWeb.Controllers
                 }
             }
 
-            return View(contact);
+            return View(model);
         }
 
         public async Task<IActionResult> CreateContact()

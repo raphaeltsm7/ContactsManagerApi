@@ -10,10 +10,7 @@ namespace ContactsManagerWeb.Models.DTO {
 
         [Required(ErrorMessage = "O Email é obrigatório.")]
         public string Email { get; set; }
-        [Required]
-
-        public string Phone { get; set; }
-        [Required]
+        public string Phone { get; set; } 
 
         public string Address { get; set; }
     }
