@@ -31,13 +31,28 @@ namespace ContactsManagerWeb.Controllers
             return View(listContacts);
         }
 
-        [HttpDelete]
         public async Task<IActionResult> DeleteContact(int contactId)
         {
-            var response = await _contactsService.DeleteAsync<APIResponse>(contactId);
+            var response = await _contactsService.GetAsync<APIResponse>(contactId);
+            if (response.IsValid())
+            {
+                ContactsDTO model = JsonConvert.DeserializeObject<ContactsDTO>(Convert.ToString(response.Result));
+                return View(_mapper.Map<ContactsDTO>(model));
+            }
+            return NotFound();
+        }
 
-            TempData["success"] = "Contact was deleted!";
-            return RedirectToAction(nameof(IndexContacts));
+        [HttpPost]
+        public async Task<IActionResult> DeleteContact(ContactsDTO model)
+        {
+            var response = await _contactsService.DeleteAsync<APIResponse>(model.Id);
+            if (response.IsValid())
+            {
+                TempData["success"] = "Contact was deleted successfully!";
+                return RedirectToAction(nameof(IndexContacts));
+            }
+            TempData["error"] = "Contact was not deleted!";
+            return View(model);
         }
 
         public async Task<IActionResult> UpdateContact(int contactId)
