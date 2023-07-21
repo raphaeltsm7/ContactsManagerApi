@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace ContactsManagerApi.Controllers {
     [Route("/ContactsAPI")]
+    [ApiController]
     public class ContactsController : ControllerBase {
 
         private readonly APIResponse _response;
