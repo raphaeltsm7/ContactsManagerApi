@@ -34,7 +34,11 @@ namespace ContactsManagerApi.Repository
             var user = _db.LocalUsers.FirstOrDefault(u => u.UserName.ToLower() == loginResquestDTO.UserName.ToLower() && u.Password == LoginResquestDTO.Password);
             if (user == null)
             {
-                return null;
+                return new LoginResponseDTO()
+                {
+                    Token = "",
+                    User = null
+                };
             }
             //if user was found generate JWT Token
             var tokenHandler = new JwtSecurityTokenHandler();

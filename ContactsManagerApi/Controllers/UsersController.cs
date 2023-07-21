@@ -16,6 +16,10 @@ namespace ContactsManagerApi.Controllers
         [HttpPost("login")]
         public async Task<IActionResult> Login([FromBody] LoginResquestDTO model)
         {
+            var loginResponse = await _userRepo.Login(model);
+            if(loginResponse.User == null || string.IsNullOrEmpty(loginResponse.Token)) {
+                return BadRequest(new { message = "Username or password is incorrect." });
+            }
             return View();
         }
 
